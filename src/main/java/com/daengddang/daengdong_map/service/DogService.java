@@ -7,7 +7,6 @@ import com.daengddang.daengdong_map.domain.dog.Dog;
 import com.daengddang.daengdong_map.domain.region.Region;
 import com.daengddang.daengdong_map.domain.region.RegionStatus;
 import com.daengddang.daengdong_map.domain.user.User;
-import com.daengddang.daengdong_map.domain.user.UserStatus;
 import com.daengddang.daengdong_map.dto.request.dog.DogRegisterRequest;
 import com.daengddang.daengdong_map.dto.request.dog.DogUpdateRequest;
 import com.daengddang.daengdong_map.dto.response.dog.DogRegisterResponse;
@@ -35,10 +34,6 @@ public class DogService {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(ErrorCode.UNAUTHORIZED));
-
-        if (user.getStatus() != UserStatus.ACTIVE) {
-            throw new BaseException(ErrorCode.UNAUTHORIZED);
-        }
 
         String name = request.getName().trim();
         Long breedId = request.getBreedId();
@@ -89,18 +84,11 @@ public class DogService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(ErrorCode.UNAUTHORIZED));
 
-        if (user.getStatus() != UserStatus.ACTIVE) {
-            throw new BaseException(ErrorCode.UNAUTHORIZED);
-        }
-
         Dog dog = dogRepository.findByUser(user)
                 .orElseThrow(() -> new BaseException(ErrorCode.RESOURCE_NOT_FOUND));
 
         Breed breed = breedRepository.findById(request.getBreedId())
                 .orElseThrow(() -> new BaseException(ErrorCode.DOG_BREED_NOT_FOUND));
-
-        Region region = regionRepository.findByIdAndStatus(request.getRegionId(), RegionStatus.ACTIVE)
-                .orElseThrow(() -> new BaseException(ErrorCode.REGION_NOT_FOUND));
 
         boolean isNeutered = request.getIsNeutered() != null && request.getIsNeutered();
 
@@ -111,11 +99,8 @@ public class DogService {
                 isNeutered,
                 request.getWeight().floatValue(),
                 request.getProfileImageUrl(),
-                breed,
-                region
+                breed
         );
-
-        user.updateRegion(region);
 
         return DogResponse.from(dog);
     }
