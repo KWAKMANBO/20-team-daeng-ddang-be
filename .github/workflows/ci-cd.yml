@@ -5,7 +5,6 @@ on:
     branches: [ "main", "dev" ]
   push:
     branches: [ "main", "dev" ]
-
   # 코드 변경없이 CI 스크립트가 잘 작동하는지 확인하고 싶어서 사용
   workflow_dispatch: { }
 
@@ -55,7 +54,7 @@ jobs:
 
   cd:
     name: cd
-    if : github.event_name == 'push'
+    #if : github.event_name == 'push'
     needs: ci
     runs-on: ubuntu-latest
 
