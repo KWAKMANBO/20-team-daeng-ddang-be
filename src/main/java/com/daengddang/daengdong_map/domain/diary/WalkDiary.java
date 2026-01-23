@@ -1,11 +1,10 @@
-package com.daengddang.daengdong_map.domain.diaries;
+package com.daengddang.daengdong_map.domain.diary;
 
 import com.daengddang.daengdong_map.domain.common.BaseTimeEntity;
 import com.daengddang.daengdong_map.domain.user.User;
 import com.daengddang.daengdong_map.domain.walk.Walk;
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,7 +19,7 @@ import lombok.NoArgsConstructor;
         sequenceName = "walk_diaries_walk_diary_id_seq",
         allocationSize = 1
 )
-public class WalkDiaries extends BaseTimeEntity {
+public class WalkDiary extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "walk_diary_seq_generator")
@@ -46,11 +45,11 @@ public class WalkDiaries extends BaseTimeEntity {
     private Long expressionId;
 
     @Builder
-    private WalkDiaries(String memo,
-                        String mapImageUrl,
-                        User user,
-                        Walk walk,
-                        Long expressionId) {
+    private WalkDiary(String memo,
+                      String mapImageUrl,
+                      User user,
+                      Walk walk,
+                      Long expressionId) {
         this.memo = memo;
         this.mapImageUrl = mapImageUrl;
         this.user = user;
