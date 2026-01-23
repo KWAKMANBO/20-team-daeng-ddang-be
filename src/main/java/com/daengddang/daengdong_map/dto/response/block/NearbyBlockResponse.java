@@ -18,7 +18,7 @@ public class NearbyBlockResponse {
         this.occupiedAt = occupiedAt;
     }
 
-    public static NearbyBlockResponse of(String blockId, Long dogId, LocalDateTime occupiedAt) {
+    public static NearbyBlockResponse from(String blockId, Long dogId, LocalDateTime occupiedAt) {
         return NearbyBlockResponse.builder()
                 .blockId(blockId)
                 .dogId(dogId)

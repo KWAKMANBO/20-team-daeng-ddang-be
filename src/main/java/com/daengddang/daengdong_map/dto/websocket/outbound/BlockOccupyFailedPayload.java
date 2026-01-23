@@ -16,7 +16,7 @@ public class BlockOccupyFailedPayload {
         this.reason = reason.getMessage();
     }
 
-    public static BlockOccupyFailedPayload of(BlockOccupyFailReason reason) {
+    public static BlockOccupyFailedPayload from(BlockOccupyFailReason reason) {
         return new BlockOccupyFailedPayload(reason);
     }
 }

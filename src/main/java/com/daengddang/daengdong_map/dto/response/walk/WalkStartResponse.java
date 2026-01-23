@@ -21,7 +21,7 @@ public class WalkStartResponse {
         this.status = status;
     }
 
-    public static WalkStartResponse of(Long walkId, LocalDateTime startedAt, WalkStatus status) {
+    public static WalkStartResponse from(Long walkId, LocalDateTime startedAt, WalkStatus status) {
         return WalkStartResponse.builder()
                 .walkId(walkId)
                 .startedAt(startedAt)

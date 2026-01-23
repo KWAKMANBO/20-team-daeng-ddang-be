@@ -23,7 +23,7 @@ public class LocationUpdatePayload {
         this.timestamp = timestamp;
     }
 
-    public static LocationUpdatePayload of(double lat, double lng, OffsetDateTime timestamp) {
+    public static LocationUpdatePayload from(double lat, double lng, OffsetDateTime timestamp) {
         return new LocationUpdatePayload(lat, lng, timestamp);
     }
 }

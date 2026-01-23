@@ -4,17 +4,13 @@ import com.daengddang.daengdong_map.common.ErrorCode;
 import com.daengddang.daengdong_map.common.exception.BaseException;
 import com.daengddang.daengdong_map.domain.breed.Breed;
 import com.daengddang.daengdong_map.domain.dog.Dog;
-import com.daengddang.daengdong_map.domain.region.Region;
-import com.daengddang.daengdong_map.domain.region.RegionStatus;
 import com.daengddang.daengdong_map.domain.user.User;
 import com.daengddang.daengdong_map.dto.request.dog.DogRegisterRequest;
 import com.daengddang.daengdong_map.dto.request.dog.DogUpdateRequest;
 import com.daengddang.daengdong_map.dto.response.dog.DogRegisterResponse;
 import com.daengddang.daengdong_map.dto.response.dog.DogResponse;
-import com.daengddang.daengdong_map.dto.response.dog.DogResponse;
 import com.daengddang.daengdong_map.repository.BreedRepository;
 import com.daengddang.daengdong_map.repository.DogRepository;
-import com.daengddang.daengdong_map.repository.RegionRepository;
 import com.daengddang.daengdong_map.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,7 +23,6 @@ public class DogService {
     private final DogRepository dogRepository;
     private final UserRepository userRepository;
     private final BreedRepository breedRepository;
-    private final RegionRepository regionRepository;
 
     @Transactional
     public DogRegisterResponse registerDog(Long userId, DogRegisterRequest dto) {
@@ -35,29 +30,16 @@ public class DogService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(ErrorCode.UNAUTHORIZED));
 
-        String name = dto.getName().trim();
         Long breedId = dto.getBreedId();
-        Float weight = dto.getWeight().floatValue();
 
         Breed breed = breedRepository.findById(breedId)
                 .orElseThrow(() -> new BaseException(ErrorCode.DOG_BREED_NOT_FOUND));
 
-        boolean isNeutered = dto.getIsNeutered() != null && dto.getIsNeutered();
-
-        Dog dog = Dog.builder()
-                .name(name)
-                .breed(breed)
-                .birthDate(dto.getBirthDate())
-                .gender(dto.getGender())
-                .isNeutered(isNeutered)
-                .weight(weight)
-                .profileImageUrl(dto.getProfileImageUrl())
-                .user(user)
-                .build();
+        Dog dog = DogRegisterRequest.of(dto, user, breed);
 
         Dog saved = dogRepository.save(dog);
 
-        return DogRegisterResponse.of(saved.getId(), saved.getDogKey());
+        return DogRegisterResponse.from(saved.getId(), saved.getDogKey());
     }
 
     @Transactional
@@ -90,17 +72,7 @@ public class DogService {
         Breed breed = breedRepository.findById(dto.getBreedId())
                 .orElseThrow(() -> new BaseException(ErrorCode.DOG_BREED_NOT_FOUND));
 
-        boolean isNeutered = dto.getIsNeutered() != null && dto.getIsNeutered();
-
-        dog.updateProfile(
-                dto.getName().trim(),
-                dto.getBirthDate(),
-                dto.getGender(),
-                isNeutered,
-                dto.getWeight().floatValue(),
-                dto.getProfileImageUrl(),
-                breed
-        );
+        DogUpdateRequest.of(dto, dog, breed);
 
         return DogResponse.from(dog);
     }

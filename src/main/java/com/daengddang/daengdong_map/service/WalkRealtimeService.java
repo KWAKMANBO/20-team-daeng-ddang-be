@@ -66,7 +66,7 @@ public class WalkRealtimeService {
 
         if (!staySatisfied) {
             BlockOccupyFailedPayload failPayload =
-                    BlockOccupyFailedPayload.of(BlockOccupyFailReason.INSUFFICIENT_STAY_TIME);
+                    BlockOccupyFailedPayload.from(BlockOccupyFailReason.INSUFFICIENT_STAY_TIME);
             WebSocketMessage<BlockOccupyFailedPayload> message =
                     new WebSocketMessage<>(WebSocketEventType.BLOCK_OCCUPY_FAILED, failPayload,
                             WebSocketEventType.BLOCK_OCCUPY_FAILED.getMessage());
@@ -121,7 +121,7 @@ public class WalkRealtimeService {
     // blockId/좌표 변환은 BlockIdUtil에서 공통 처리한다.
 
     private void sendBlockOccupied(Long walkId, String blockId, Dog dog, LocalDateTime occupiedAt) {
-        BlockOccupiedPayload payload = BlockOccupiedPayload.of(blockId, dog.getId(), dog.getName(), occupiedAt);
+        BlockOccupiedPayload payload = BlockOccupiedPayload.from(blockId, dog.getId(), dog.getName(), occupiedAt);
         WebSocketMessage<BlockOccupiedPayload> message =
                 new WebSocketMessage<>(WebSocketEventType.BLOCK_OCCUPIED, payload,
                         WebSocketEventType.BLOCK_OCCUPIED.getMessage());
@@ -129,7 +129,7 @@ public class WalkRealtimeService {
     }
 
     private void sendBlockTaken(Long walkId, String blockId, Long previousDogId, Long newDogId, LocalDateTime takenAt) {
-        BlockTakenPayload payload = BlockTakenPayload.of(blockId, previousDogId, newDogId, takenAt);
+        BlockTakenPayload payload = BlockTakenPayload.from(blockId, previousDogId, newDogId, takenAt);
         WebSocketMessage<BlockTakenPayload> message =
                 new WebSocketMessage<>(WebSocketEventType.BLOCK_TAKEN, payload,
                         WebSocketEventType.BLOCK_TAKEN.getMessage());

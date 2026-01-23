@@ -58,24 +58,15 @@ public class WalkService {
 
         LocalDateTime now = LocalDateTime.now();
 
-        Walk walk = Walk.builder()
-                .dog(dog)
-                .startedAt(now)
-                .status(WalkStatus.IN_PROGRESS)
-                .build();
+        Walk walk = WalkStartRequest.of(dog, now);
 
         Walk saved = walkRepository.save(walk);
 
-        WalkPoint startPoint = WalkPoint.builder()
-                .walk(saved)
-                .latitude(dto.getStartLat())
-                .longitude(dto.getStartLng())
-                .recordedAt(now)
-                .build();
+        WalkPoint startPoint = WalkStartRequest.of(dto, saved, now);
 
         walkPointRepository.save(startPoint);
 
-        return WalkStartResponse.of(saved.getId(), saved.getStartedAt(), saved.getStatus());
+        return WalkStartResponse.from(saved.getId(), saved.getStartedAt(), saved.getStatus());
     }
 
     @Transactional
@@ -111,17 +102,12 @@ public class WalkService {
 
         walk.finish(now, distanceMeters, request.getDurationSeconds());
 
-        WalkPoint endPoint = WalkPoint.builder()
-                .walk(walk)
-                .latitude(request.getEndLat())
-                .longitude(request.getEndLng())
-                .recordedAt(now)
-                .build();
+        WalkPoint endPoint = WalkEndRequest.of(request, walk, now);
         walkPointRepository.save(endPoint);
 
         int occupiedBlockCount = blockOwnershipRepository.findAllByDog(dog).size();
 
-        return WalkEndResponse.of(
+        return WalkEndResponse.from(
                 walk.getId(),
                 walk.getStartedAt(),
                 walk.getEndedAt(),
@@ -147,13 +133,13 @@ public class WalkService {
                 .map(this::toOccupiedBlock)
                 .toList();
 
-        return OccupiedBlockListResponse.of(blocks);
+        return OccupiedBlockListResponse.from(blocks);
     }
 
     private OccupiedBlockResponse toOccupiedBlock(BlockOwnership ownership) {
         Block block = ownership.getBlock();
         String blockId = BlockIdUtil.toBlockId(block.getX(), block.getY());
-        return OccupiedBlockResponse.of(
+        return OccupiedBlockResponse.from(
                 blockId,
                 ownership.getDog().getId(),
                 ownership.getAcquiredAt()

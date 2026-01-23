@@ -42,7 +42,7 @@ public class BlockService {
                 .map(this::toNearbyBlock)
                 .toList();
 
-        return NearbyBlockListResponse.of(blocks);
+        return NearbyBlockListResponse.from(blocks);
     }
 
     private boolean isValidInput(Double lat, Double lng, Integer radiusMeters) {
@@ -62,7 +62,7 @@ public class BlockService {
     private NearbyBlockResponse toNearbyBlock(BlockOwnership ownership) {
         Block block = ownership.getBlock();
         String blockId = BlockIdUtil.toBlockId(block.getX(), block.getY());
-        return NearbyBlockResponse.of(
+        return NearbyBlockResponse.from(
                 blockId,
                 ownership.getDog().getId(),
                 ownership.getAcquiredAt()

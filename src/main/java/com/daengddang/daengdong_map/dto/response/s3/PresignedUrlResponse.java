@@ -17,7 +17,7 @@ public class PresignedUrlResponse {
         this.expiresIn = expiresIn;
     }
 
-    public static PresignedUrlResponse of(String presignedUrl, String objectKey, long expiresIn) {
+    public static PresignedUrlResponse from(String presignedUrl, String objectKey, long expiresIn) {
         return PresignedUrlResponse.builder()
                 .presignedUrl(presignedUrl)
                 .objectKey(objectKey)

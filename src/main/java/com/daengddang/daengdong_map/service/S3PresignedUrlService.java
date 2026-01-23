@@ -70,7 +70,7 @@ public class S3PresignedUrlService {
         PresignedPutObjectRequest presignedRequest =
                 s3Presigner.presignPutObject(presignRequest);
 
-        return PresignedUrlResponse.of(
+        return PresignedUrlResponse.from(
                 presignedRequest.url().toString(),
                 objectKey,
                 PRESIGNED_URL_DURATION.getSeconds()

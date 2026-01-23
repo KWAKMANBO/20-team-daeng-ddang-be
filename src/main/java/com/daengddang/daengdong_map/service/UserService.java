@@ -34,9 +34,9 @@ public class UserService {
         Region region = regionRepository.findByIdAndStatus(dto.getRegionId(), RegionStatus.ACTIVE)
                 .orElseThrow(() -> new BaseException(ErrorCode.REGION_NOT_FOUND));
 
-        user.updateRegion(region);
+        UserRegisterRequest.of(dto, user, region);
 
-        return UserRegisterResponse.of(user.getId(), region.getId());
+        return UserRegisterResponse.from(user.getId(), region.getId());
     }
 
     @Transactional(readOnly = true)

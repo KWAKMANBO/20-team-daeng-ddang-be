@@ -23,7 +23,7 @@ public class AuthTokenResponse {
         this.user = user;
     }
 
-    public static AuthTokenResponse of(
+    public static AuthTokenResponse from(
             String accessToken,
             boolean isNewUser,
             Long userId

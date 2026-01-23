@@ -12,7 +12,7 @@ public class NearbyBlockListResponse {
         this.blocks = blocks;
     }
 
-    public static NearbyBlockListResponse of(List<NearbyBlockResponse> blocks) {
+    public static NearbyBlockListResponse from(List<NearbyBlockResponse> blocks) {
         return new NearbyBlockListResponse(blocks);
     }
 }
