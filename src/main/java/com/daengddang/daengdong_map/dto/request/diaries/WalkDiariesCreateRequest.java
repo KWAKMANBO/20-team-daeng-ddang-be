@@ -1,7 +1,8 @@
 package com.daengddang.daengdong_map.dto.request.diaries;
 
-import com.daengddang.daengdong_map.domain.diaries.WalkDiaries;
+import com.daengddang.daengdong_map.domain.diary.WalkDiary;
 import com.daengddang.daengdong_map.domain.user.User;
+import com.daengddang.daengdong_map.domain.walk.Walk;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 public class WalkDiariesCreateRequest {
 
     private String memo;
+
     private String mapImageUrl;
 
     public WalkDiariesCreateRequest(String memo, String mapImageUrl) {
@@ -17,11 +19,12 @@ public class WalkDiariesCreateRequest {
         this.mapImageUrl = mapImageUrl;
     }
 
-    public static WalkDiaries of(WalkDiariesCreateRequest dto, User user) {
-        return WalkDiaries.builder()
+    public static WalkDiary of(WalkDiariesCreateRequest dto, User user, Walk walk) {
+        return WalkDiary.builder()
                 .memo(dto.getMemo())
                 .mapImageUrl(dto.getMapImageUrl())
                 .user(user)
+                .walk(walk)
                 .build();
     }
 

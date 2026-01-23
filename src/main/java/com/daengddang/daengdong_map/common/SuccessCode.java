@@ -43,8 +43,8 @@ public enum SuccessCode {
 
     EMOTION_ANALYSIS_RESULT_CREATED("표정 분석 결과 생성에 성공했습니다."),
     EMOTION_ANALYSIS_RESULT_RETRIEVED("표정 분석 결과 조회에 성공했습니다."),
-    WALK_NOTE_RETRIEVED("산책일지 조회에 성공했습니다."),
-    WALK_NOTE_CREATED("산책일지가 작성되었습니다."),
+    WALK_DIARY_RETRIEVED("산책일지 조회에 성공했습니다."),
+    WALK_DIARY_CREATED("산책일지가 작성되었습니다."),
     WALK_IMAGE_LIST_RETRIEVED("산책 이미지 목록 조회에 성공했습니다."),
 
     CALENDAR_RECORD_LIST_RETRIEVED("캘린더 기록 조회에 성공했습니다."),
