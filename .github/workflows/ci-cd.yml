@@ -169,14 +169,17 @@ jobs:
         uses: appleboy/ssh-action@v1.0.3
         env:
           GITHUB_SHA: ${{ github.sha }}
+          ENV_NAME: ${{ (github.ref_name == 'dev' || github.base_ref == 'dev') && 'DEV' || 'PROD' }}
         with:
           host: ${{ (github.ref_name == 'dev' || github.base_ref == 'dev') && secrets.AWS_DEV_HOST || secrets.AWS_HOST }}
           username: ${{ secrets.AWS_USERNAME }}
           key: ${{ (github.ref_name == 'dev' || github.base_ref == 'dev') && secrets.AWS_DEV_SSH_KEY || secrets.AWS_SSH_KEY }}
-          envs: GITHUB_SHA
+          envs: GITHUB_SHA,ENV_NAME
           script: |
             #!/usr/bin/env bash
             set -euo pipefail
+
+            echo "🌐 ${ENV_NAME} 서버에 연결되었습니다."
 
             # === 설정 변수 ===
             BASE_DIR="/home/ubuntu/daeng-ddang-be"
