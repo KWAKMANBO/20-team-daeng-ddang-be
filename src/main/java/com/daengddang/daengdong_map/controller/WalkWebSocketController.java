@@ -4,7 +4,7 @@ import com.daengddang.daengdong_map.dto.websocket.common.WebSocketEventType;
 import com.daengddang.daengdong_map.dto.websocket.common.WebSocketMessage;
 import com.daengddang.daengdong_map.dto.websocket.common.WebSocketErrorReason;
 import com.daengddang.daengdong_map.dto.websocket.inbound.LocationUpdatePayload;
-import com.daengddang.daengdong_map.service.WalkRealtimeService;
+import com.daengddang.daengdong_map.service.WalkWebSocketService;
 import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Controller;
 @RequiredArgsConstructor
 public class WalkWebSocketController {
 
-    private final WalkRealtimeService walkRealtimeService;
+    private final WalkWebSocketService walkWebSocketService;
 
     @MessageMapping("/walks/{walkId}/location")
     public void handleLocationUpdate(
@@ -24,15 +24,15 @@ public class WalkWebSocketController {
             Principal principal
     ) {
         if (message == null || message.getData() == null) {
-            walkRealtimeService.sendError(walkId, WebSocketErrorReason.INVALID_LOCATION.getMessage());
+            walkWebSocketService.sendError(walkId, WebSocketErrorReason.INVALID_LOCATION.getMessage());
             return;
         }
         if (message.getType() != null && message.getType() != WebSocketEventType.LOCATION_UPDATE) {
-            walkRealtimeService.sendError(walkId, WebSocketErrorReason.INVALID_EVENT_TYPE.getMessage());
+            walkWebSocketService.sendError(walkId, WebSocketErrorReason.INVALID_EVENT_TYPE.getMessage());
             return;
         }
 
-        walkRealtimeService.handleLocationUpdate(walkId, message.getData(), principal);
+        walkWebSocketService.handleLocationUpdate(walkId, message.getData(), principal);
     }
 
 }

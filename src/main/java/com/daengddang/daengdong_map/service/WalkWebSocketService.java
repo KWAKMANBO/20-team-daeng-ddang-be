@@ -17,11 +17,9 @@ import com.daengddang.daengdong_map.domain.walk.WalkStatus;
 import com.daengddang.daengdong_map.repository.BlockOwnershipRepository;
 import com.daengddang.daengdong_map.repository.BlockRepository;
 import com.daengddang.daengdong_map.repository.WalkRepository;
-import java.time.Duration;
+
 import java.time.LocalDateTime;
 import java.security.Principal;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -31,24 +29,24 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 @Service
 @RequiredArgsConstructor
-public class WalkRealtimeService {
-
-    private static final long STAY_SECONDS = 5;
+public class WalkWebSocketService {
 
     private final SimpMessagingTemplate messagingTemplate;
     private final WalkRepository walkRepository;
     private final BlockRepository blockRepository;
     private final BlockOwnershipRepository blockOwnershipRepository;
-    private final ConcurrentMap<Long, StayState> stayStates = new ConcurrentHashMap<>();
+    private final WalkPointWriter walkPointWriter;
+    private final StayValidator stayValidator;
+    private final BlockSyncService blockSyncService;
 
     @Transactional
     public void handleLocationUpdate(Long walkId, LocationUpdatePayload payload, Principal principal) {
         // TODO: walk 상태/권한 검증 + 점유/탈취 로직
-        // 클라이언트 시간은 신뢰하지 않고 서버 시간을 사용한다.
         LocalDateTime timestamp = LocalDateTime.now();
 
         Walk walk = walkRepository.findById(walkId)
                 .orElse(null);
+
         if (walk == null || walk.getStatus() != WalkStatus.IN_PROGRESS) {
             sendError(walkId, WebSocketErrorReason.INVALID_WALK_SESSION.getMessage());
             return;
@@ -59,18 +57,24 @@ public class WalkRealtimeService {
             return;
         }
 
+        walkPointWriter.save(walk, payload.getLat(), payload.getLng(), timestamp);
+
         int blockX = BlockIdUtil.toBlockX(payload.getLat());
         int blockY = BlockIdUtil.toBlockY(payload.getLng());
         String blockId = BlockIdUtil.toBlockId(blockX, blockY);
-        boolean staySatisfied = updateStayState(walkId, blockId, timestamp);
+        String areaKey = blockSyncService.toAreaKey(blockX, blockY);
+        boolean staySatisfied = stayValidator.isStaySatisfied(walkId, blockId, timestamp);
 
         if (!staySatisfied) {
             BlockOccupyFailedPayload failPayload =
                     BlockOccupyFailedPayload.from(BlockOccupyFailReason.INSUFFICIENT_STAY_TIME);
+
             WebSocketMessage<BlockOccupyFailedPayload> message =
                     new WebSocketMessage<>(WebSocketEventType.BLOCK_OCCUPY_FAILED, failPayload,
                             WebSocketEventType.BLOCK_OCCUPY_FAILED.getMessage());
+
             messagingTemplate.convertAndSend("/topic/walks/" + walkId, message);
+            blockSyncService.syncBlocks(walkId, blockX, blockY, areaKey, timestamp);
             return;
         }
 
@@ -88,52 +92,50 @@ public class WalkRealtimeService {
                     .lastPassedAt(timestamp)
                     .build();
             blockOwnershipRepository.save(newOwnership);
-            sendBlockOccupied(walkId, blockId, dog, timestamp);
+            sendBlockOccupied(walkId, blockId, dog, timestamp, areaKey);
+            blockSyncService.syncBlocks(walkId, blockX, blockY, areaKey, timestamp);
             return;
         }
 
         if (ownership.getDog().getId().equals(dog.getId())) {
             ownership.updateLastPassedAt(timestamp);
+            blockSyncService.syncBlocks(walkId, blockX, blockY, areaKey, timestamp);
             return;
         }
 
         Long previousDogId = ownership.getDog().getId();
         ownership.updateOwner(dog, timestamp);
-        sendBlockTaken(walkId, blockId, previousDogId, dog.getId(), timestamp);
+        sendBlockTaken(walkId, blockId, previousDogId, dog.getId(), timestamp, areaKey);
+        blockSyncService.syncBlocks(walkId, blockX, blockY, areaKey, timestamp);
     }
 
     public void sendError(Long walkId, String message) {
         messagingTemplate.convertAndSend("/topic/walks/" + walkId, WebSocketMessage.error(message));
     }
 
-    private boolean updateStayState(Long walkId, String blockId, LocalDateTime timestamp) {
-        StayState state = stayStates.get(walkId);
-        if (state == null || !state.blockId.equals(blockId)) {
-            stayStates.put(walkId, new StayState(blockId, timestamp));
-            return false;
-        }
-
-        state.lastSeenAt = timestamp;
-        Duration stayed = Duration.between(state.enteredAt, timestamp);
-        return stayed.getSeconds() >= STAY_SECONDS;
-    }
-
     // blockId/좌표 변환은 BlockIdUtil에서 공통 처리한다.
 
-    private void sendBlockOccupied(Long walkId, String blockId, Dog dog, LocalDateTime occupiedAt) {
+    private void sendBlockOccupied(Long walkId, String blockId, Dog dog, LocalDateTime occupiedAt, String areaKey) {
         BlockOccupiedPayload payload = BlockOccupiedPayload.from(blockId, dog.getId(), dog.getName(), occupiedAt);
         WebSocketMessage<BlockOccupiedPayload> message =
                 new WebSocketMessage<>(WebSocketEventType.BLOCK_OCCUPIED, payload,
                         WebSocketEventType.BLOCK_OCCUPIED.getMessage());
-        sendAfterCommit(() -> messagingTemplate.convertAndSend("/topic/walks/" + walkId, message));
+        sendAfterCommit(() -> {
+            messagingTemplate.convertAndSend("/topic/walks/" + walkId, message);
+            messagingTemplate.convertAndSend("/topic/blocks/" + areaKey, message);
+        });
     }
 
-    private void sendBlockTaken(Long walkId, String blockId, Long previousDogId, Long newDogId, LocalDateTime takenAt) {
+    private void sendBlockTaken(Long walkId, String blockId, Long previousDogId, Long newDogId,
+                                LocalDateTime takenAt, String areaKey) {
         BlockTakenPayload payload = BlockTakenPayload.from(blockId, previousDogId, newDogId, takenAt);
         WebSocketMessage<BlockTakenPayload> message =
                 new WebSocketMessage<>(WebSocketEventType.BLOCK_TAKEN, payload,
                         WebSocketEventType.BLOCK_TAKEN.getMessage());
-        sendAfterCommit(() -> messagingTemplate.convertAndSend("/topic/walks/" + walkId, message));
+        sendAfterCommit(() -> {
+            messagingTemplate.convertAndSend("/topic/walks/" + walkId, message);
+            messagingTemplate.convertAndSend("/topic/blocks/" + areaKey, message);
+        });
     }
 
     private boolean isValidCoordinate(double lat, double lng) {
@@ -156,15 +158,4 @@ public class WalkRealtimeService {
         action.run();
     }
 
-    private static class StayState {
-        private final String blockId;
-        private final LocalDateTime enteredAt;
-        private LocalDateTime lastSeenAt;
-
-        private StayState(String blockId, LocalDateTime enteredAt) {
-            this.blockId = blockId;
-            this.enteredAt = enteredAt;
-            this.lastSeenAt = enteredAt;
-        }
-    }
 }
