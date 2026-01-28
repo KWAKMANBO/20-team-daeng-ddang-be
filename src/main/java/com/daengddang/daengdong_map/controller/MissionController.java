@@ -2,7 +2,6 @@ package com.daengddang.daengdong_map.controller;
 
 import com.daengddang.daengdong_map.common.ApiResponse;
 import com.daengddang.daengdong_map.common.SuccessCode;
-import com.daengddang.daengdong_map.dto.request.mission.MissionJudgeRequest;
 import com.daengddang.daengdong_map.dto.response.mission.MissionJudgeResponse;
 import com.daengddang.daengdong_map.dto.request.mission.MissionUploadRequest;
 import com.daengddang.daengdong_map.dto.response.mission.MissionUploadListResponse;
@@ -31,7 +30,7 @@ public class MissionController {
     ) {
 
         MissionJudgeResponse response =
-                missionJudgeService.judge(authUser.getUserId(), walkId, MissionJudgeRequest.empty());
+                missionJudgeService.judge(authUser.getUserId(), walkId);
         return ApiResponse.success(SuccessCode.MISSION_ANALYSIS_COMPLETED, response);
     }
 
