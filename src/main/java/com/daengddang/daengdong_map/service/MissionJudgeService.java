@@ -11,7 +11,6 @@ import com.daengddang.daengdong_map.domain.user.User;
 import com.daengddang.daengdong_map.domain.walk.Walk;
 import com.daengddang.daengdong_map.domain.walk.WalkStatus;
 import com.daengddang.daengdong_map.dto.request.mission.FastApiMissionJudgeRequest;
-import com.daengddang.daengdong_map.dto.request.mission.MissionJudgeRequest;
 import com.daengddang.daengdong_map.dto.response.mission.FastApiMissionJudgeResponse;
 import com.daengddang.daengdong_map.dto.response.mission.MissionJudgeResponse;
 import com.daengddang.daengdong_map.repository.MissionRepository;
@@ -45,11 +44,7 @@ public class MissionJudgeService {
     private final FastApiMissionClient fastApiMissionClient;
 
     @Transactional
-    public MissionJudgeResponse judge(Long userId, Long walkId, MissionJudgeRequest request) {
-        if (request == null) {
-            throw new BaseException(ErrorCode.INVALID_FORMAT);
-        }
-
+    public MissionJudgeResponse judge(Long userId, Long walkId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(ErrorCode.UNAUTHORIZED));
 
