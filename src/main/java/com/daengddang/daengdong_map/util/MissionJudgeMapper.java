@@ -1,4 +1,4 @@
-package com.daengddang.daengdong_map.service;
+package com.daengddang.daengdong_map.util;
 
 import com.daengddang.daengdong_map.common.ErrorCode;
 import com.daengddang.daengdong_map.common.exception.BaseException;

@@ -1,5 +1,6 @@
 package com.daengddang.daengdong_map.service;
 
+import com.daengddang.daengdong_map.ai.FastApiClient;
 import com.daengddang.daengdong_map.common.ErrorCode;
 import com.daengddang.daengdong_map.common.exception.BaseException;
 import com.daengddang.daengdong_map.domain.mission.Mission;
@@ -13,6 +14,7 @@ import com.daengddang.daengdong_map.domain.walk.WalkStatus;
 import com.daengddang.daengdong_map.dto.request.mission.FastApiMissionJudgeRequest;
 import com.daengddang.daengdong_map.dto.response.mission.FastApiMissionJudgeResponse;
 import com.daengddang.daengdong_map.dto.response.mission.MissionJudgeResponse;
+import com.daengddang.daengdong_map.util.MissionJudgeMapper;
 import com.daengddang.daengdong_map.repository.MissionRepository;
 import com.daengddang.daengdong_map.repository.MissionRecordRepository;
 import com.daengddang.daengdong_map.repository.MissionUploadRepository;

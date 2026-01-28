@@ -1,6 +1,5 @@
-package com.daengddang.daengdong_map.service;
+package com.daengddang.daengdong_map.ai;
 
-import com.daengddang.daengdong_map.ai.FastApiProperties;
 import com.daengddang.daengdong_map.common.ErrorCode;
 import com.daengddang.daengdong_map.common.exception.BaseException;
 import com.daengddang.daengdong_map.dto.request.expression.FastApiFaceAnalyzeRequest;

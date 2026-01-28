@@ -17,6 +17,8 @@ import com.daengddang.daengdong_map.domain.walk.WalkStatus;
 import com.daengddang.daengdong_map.repository.BlockOwnershipRepository;
 import com.daengddang.daengdong_map.repository.BlockRepository;
 import com.daengddang.daengdong_map.repository.WalkRepository;
+import com.daengddang.daengdong_map.util.StayValidator;
+import com.daengddang.daengdong_map.util.WalkPointWriter;
 
 import java.time.LocalDateTime;
 import java.security.Principal;

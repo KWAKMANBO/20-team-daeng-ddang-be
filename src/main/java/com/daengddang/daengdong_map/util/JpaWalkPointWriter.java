@@ -1,4 +1,4 @@
-package com.daengddang.daengdong_map.service;
+package com.daengddang.daengdong_map.util;
 
 import com.daengddang.daengdong_map.domain.walk.Walk;
 import com.daengddang.daengdong_map.domain.walk.WalkPoint;

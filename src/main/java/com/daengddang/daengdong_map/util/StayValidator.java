@@ -1,4 +1,4 @@
-package com.daengddang.daengdong_map.service;
+package com.daengddang.daengdong_map.util;
 
 import java.time.Duration;
 import java.time.LocalDateTime;

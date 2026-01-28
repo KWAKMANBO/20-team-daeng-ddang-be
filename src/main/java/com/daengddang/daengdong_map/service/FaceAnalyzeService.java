@@ -1,5 +1,6 @@
 package com.daengddang.daengdong_map.service;
 
+import com.daengddang.daengdong_map.ai.FastApiClient;
 import com.daengddang.daengdong_map.common.ErrorCode;
 import com.daengddang.daengdong_map.common.exception.BaseException;
 import com.daengddang.daengdong_map.domain.dog.Dog;
