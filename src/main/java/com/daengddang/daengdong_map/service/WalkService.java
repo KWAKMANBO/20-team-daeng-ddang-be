@@ -109,7 +109,9 @@ public class WalkService {
     public OccupiedBlockListResponse getOccupiedBlocks(Long userId, Long walkId) {
         Walk walk = accessValidator.getOwnedWalkOrThrow(userId, walkId);
 
-        List<OccupiedBlockResponse> blocks = blockOwnershipRepository.findAllByDog(walk.getDog()).stream()
+        List<OccupiedBlockResponse> blocks = blockOwnershipRepository
+                .findAllByDogWithBlockAndDog(walk.getDog())
+                .stream()
                 .map(this::toOccupiedBlock)
                 .toList();
 
