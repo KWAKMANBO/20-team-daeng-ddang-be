@@ -47,7 +47,7 @@ public class User extends BaseTimeEntity {
     private LocalDateTime deletedAt;
 
     @Column(name = "is_agreed", nullable = true)
-    private Boolean isAgreed;
+    private Boolean isAgreed = false;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "region_id", nullable = true)
