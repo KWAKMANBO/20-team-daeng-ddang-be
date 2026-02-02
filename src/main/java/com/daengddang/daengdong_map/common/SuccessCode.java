@@ -29,6 +29,7 @@ public enum SuccessCode {
 
     WALK_STARTED("산책이 시작되었습니다."),
     WALK_ENDED("산책이 정상적으로 종료되었습니다."),
+    WALK_ENDED_ABNORMAL("비정상적인 접근"),
     OCCUPIED_BLOCKS_RETRIEVED("점유 블록 조회에 성공했습니다."),
     NEARBY_BLOCKS_RETRIEVED("주변 블록 조회에 성공했습니다."),
 
