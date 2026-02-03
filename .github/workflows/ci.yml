@@ -65,7 +65,7 @@ jobs:
       - name: Upload build artifact (jar)
         uses: actions/upload-artifact@v4
         with:
-          name: daeng-map-api-${{ github.run_id }}
+          name: daeng-map-api-${{ github.sha }}
           path: build/libs/*.jar
           if-no-files-found: error
           retention-days: 30
