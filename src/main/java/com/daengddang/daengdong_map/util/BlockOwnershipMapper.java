@@ -1,6 +1,5 @@
 package com.daengddang.daengdong_map.util;
 
-import com.daengddang.daengdong_map.common.BlockIdUtil;
 import com.daengddang.daengdong_map.domain.block.Block;
 import com.daengddang.daengdong_map.domain.block.BlockOwnership;
 import java.time.LocalDateTime;

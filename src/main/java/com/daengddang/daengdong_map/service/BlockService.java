@@ -6,6 +6,7 @@ import com.daengddang.daengdong_map.domain.block.BlockOwnership;
 import com.daengddang.daengdong_map.dto.response.block.NearbyBlockListResponse;
 import com.daengddang.daengdong_map.dto.response.block.NearbyBlockResponse;
 import com.daengddang.daengdong_map.repository.BlockOwnershipRepository;
+import com.daengddang.daengdong_map.util.BlockIdUtil;
 import com.daengddang.daengdong_map.util.BlockOwnershipMapper;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
