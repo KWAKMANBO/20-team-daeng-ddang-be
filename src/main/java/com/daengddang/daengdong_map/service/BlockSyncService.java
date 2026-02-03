@@ -1,6 +1,6 @@
 package com.daengddang.daengdong_map.service;
 
-import com.daengddang.daengdong_map.common.BlockIdUtil;
+import com.daengddang.daengdong_map.util.BlockIdUtil;
 import com.daengddang.daengdong_map.dto.websocket.common.WebSocketEventType;
 import com.daengddang.daengdong_map.dto.websocket.common.WebSocketMessage;
 import com.daengddang.daengdong_map.dto.websocket.outbound.BlockSyncEntry;
