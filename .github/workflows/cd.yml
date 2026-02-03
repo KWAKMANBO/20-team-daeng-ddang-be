@@ -31,7 +31,7 @@ jobs:
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
-          name: daeng-map-api-${{ env.RELEASE_ID }}
+          name: daeng-map-api-${{ github.event.workflow_run.id }}
           path: build/libs
           run-id: ${{ github.event.workflow_run.id }}
           repository: ${{ github.repository }}
